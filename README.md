@@ -35,8 +35,9 @@ terms = sources.predict(plasma, params={"ptot": 6e6, "chi": 0.7,
 ```
 
 Weights download from GitHub Releases on first use and are cached in
-`~/.cache/solstice`. Runnable examples: `examples/predict_state.py`,
-`examples/predict_sources.py`.
+`~/.cache/solstice`. Try it in the browser:
+[examples/quickstart.ipynb on Colab](https://colab.research.google.com/github/ORNL-Fusion/solstice/blob/main/examples/quickstart.ipynb).
+Runnable scripts: `examples/predict_state.py`, `examples/predict_sources.py`.
 
 Inputs are the models' true degrees of freedom (the training data has
 pe = pi and hci = hce, so the models see `ptot = pe + pi` and a single
@@ -92,7 +93,7 @@ canonical cases from SOLPS run directories.
 
 SOLSTICE's methods and datasets are documented in the following
 publications — please cite them when using the code or the released
-models:
+models (machine-readable form: `CITATION.cff`):
 
 - Surrogate models and dataset construction:
   [A. Diaw et al., arXiv:2607.21407 (2026)](https://arxiv.org/abs/2607.21407)

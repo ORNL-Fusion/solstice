@@ -1,5 +1,8 @@
 # Examples
 
+- `quickstart.ipynb` — load the released models and predict
+  ([open in Colab](https://colab.research.google.com/github/ORNL-Fusion/solstice/blob/main/examples/quickstart.ipynb))
+
 Using released models (self-contained bundles, raw physical inputs):
 
 - `predict_state.py` — control parameters -> plasma background
