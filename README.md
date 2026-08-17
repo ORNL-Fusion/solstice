@@ -92,7 +92,7 @@ canonical cases from SOLPS run directories.
 
 SOLSTICE's methods and datasets are documented in the following
 publications — please cite them when using the code or the released
-models (machine-readable form: `CITATION.cff`):
+models:
 
 - Surrogate models and dataset construction:
   [A. Diaw et al., arXiv:2607.21407 (2026)](https://arxiv.org/abs/2607.21407)
