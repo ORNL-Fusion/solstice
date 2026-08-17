@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use SOLSTICE or its released models, please cite it as below."
+title: "SOLSTICE: Scrape-Off Layer Surrogate Training, Inference & Coupling Ecosystem"
+authors:
+  - family-names: Diaw
+    given-names: Abdourahmane
+    affiliation: "Oak Ridge National Laboratory"
+repository-code: "https://github.com/ORNL-Fusion/solstice"
+license: Apache-2.0
+type: software
+references:
+  - type: article
+    title: "Time-dependent SOLPS-ITER simulations of the tokamak plasma boundary for model predictive control using SINDy"
+    authors:
+      - family-names: Lore
+        given-names: J. D.
+      - family-names: De Pascuale
+        given-names: S.
+      - family-names: Laiu
+        given-names: P.
+      - family-names: Russo
+        given-names: B.
+      - family-names: Park
+        given-names: J.-S.
+      - family-names: Park
+        given-names: J. M.
+      - family-names: Brunton
+        given-names: S. L.
+      - family-names: Kutz
+        given-names: J. N.
+      - family-names: Kaptanoglu
+        given-names: A. A.
+    journal: "Nuclear Fusion"
+    volume: 63
+    year: 2023
+    doi: "10.1088/1741-4326/acbe0e"

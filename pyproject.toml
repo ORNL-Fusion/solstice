@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solstice-fusion"
+version = "0.0.1"
+description = "Neural-network surrogates for SOLPS-ITER edge plasmas"
+authors = [{ name = "Abdourahmane Diaw", email = "diawa@ornl.gov" }]
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+keywords = ["fusion", "plasma", "SOLPS", "surrogate", "graph-neural-network", "tokamak"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy",
+    "xarray",
+    "netcdf4",
+    "pyyaml",
+    "safetensors",
+]
+
+[project.optional-dependencies]
+models = ["torch>=2.2", "torch_geometric"]
+zarr = ["zarr"]
+hub = ["huggingface_hub"]
+# SOLPS raw-file converters additionally require the ORNL SOLPS-routines
+# package (solps_routines) on the python path.
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[project.urls]
+Homepage = "https://github.com/ORNL-Fusion/solstice"
+Issues = "https://github.com/ORNL-Fusion/solstice/issues"

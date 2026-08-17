@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+
+# data and artifacts never enter the repo
+*.npz
+*.nc
+*.zarr/
+*.h5
+*.safetensors
+*.pt
+*.ckpt
+outputs/
+runs/
+wandb/
+
+.DS_Store
+.ipynb_checkpoints/
+notes/
+notebooks_local/
+notes_local/
