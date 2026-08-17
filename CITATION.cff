@@ -8,6 +8,24 @@ authors:
 repository-code: "https://github.com/ORNL-Fusion/solstice"
 license: Apache-2.0
 type: software
+preferred-citation:
+  type: article
+  title: "Cycle-Consistent and Uncertainty-Aware Neural Surrogates for Tokamak Edge Plasmas"
+  authors:
+    - family-names: Diaw
+      given-names: Abdourahmane
+    - family-names: De Pascuale
+      given-names: Sebastian
+    - family-names: Park
+      given-names: Jae-Sun
+    - family-names: Paradela Perez
+      given-names: Ivan
+    - family-names: Lore
+      given-names: Jeremy D.
+    - family-names: Dasbach
+      given-names: Stefan
+  year: 2026
+  url: "https://arxiv.org/abs/2607.21407"
 references:
   - type: article
     title: "Time-dependent SOLPS-ITER simulations of the tokamak plasma boundary for model predictive control using SINDy"

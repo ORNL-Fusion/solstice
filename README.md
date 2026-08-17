@@ -86,29 +86,18 @@ examples/      predict scripts for released models
 
 Training data comes from SOLPS-ITER simulations and is **not** distributed
 with this repository. Converters in `solstice.data.converters` build
-canonical cases from SOLPS run directories. The DIII-D configuration
-follows Lore et al., and the released DIII-D models derive from it —
-please cite:
+canonical cases from SOLPS run directories.
 
-```bibtex
-@article{Lore2023,
-  author  = {J. D. Lore and S. {De Pascuale} and P. Laiu and B. Russo and
-             J.-S. Park and J. M. Park and S. L. Brunton and J. N. Kutz and
-             A. A. Kaptanoglu},
-  title   = {Time-dependent SOLPS-ITER simulations of the tokamak plasma
-             boundary for model predictive control using SINDy},
-  journal = {Nuclear Fusion},
-  volume  = {63},
-  number  = {046015},
-  pages   = {1--12},
-  year    = {2023},
-  doi     = {10.1088/1741-4326/acbe0e}
-}
-```
+## Research & Attribution
 
-## Citation
+SOLSTICE's methods and datasets are documented in the following
+publications — please cite them when using the code or the released
+models (machine-readable form: `CITATION.cff`):
 
-See `CITATION.cff`.
+- Surrogate models and dataset construction:
+  [A. Diaw et al., arXiv:2607.21407 (2026)](https://arxiv.org/abs/2607.21407)
+- DIII-D SOLPS-ITER configuration:
+  [J. D. Lore et al., Nucl. Fusion 63, 046015 (2023)](https://doi.org/10.1088/1741-4326/acbe0e)
 
 ## License
 
