@@ -101,9 +101,16 @@ def test_flat_state(ref_run, tmp_path):
     na = ts.b2f_extract("na", out)
     assert np.allclose(na[:, :, 1], 5e19) and np.allclose(na[:, :, 0], 1e12)
     assert np.allclose(ts.b2f_extract("ti", out) / ts.EV_TO_J, 30.0)
-    assert np.allclose(ts.b2f_extract("po", out), 3.1 * 40.0)  # b2ai: po = 3.1 Te
+    assert np.all(ts.b2f_extract("po", out) == 0.0)  # default; b2ai's 3.1 Te via po0
     assert np.all(ts.b2f_extract("fna", out, reshape=False) == 0)
     assert ts.b2f_extract("time", out, reshape=False)[0] == 0
+
+
+def test_flat_state_b2ai_potential(ref_run, tmp_path):
+    run, _ = ref_run
+    fields = ts.build_flat_state(run / "b2fstate", 1e19, 100.0, 100.0, 1e12,
+                                 po0=ts.PO_OVER_TE * 100.0)
+    assert np.allclose(fields["po"], 310.0)
 
 
 def test_stage_run_dir(ref_run, tmp_path):
