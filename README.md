@@ -39,6 +39,16 @@ Weights download from GitHub Releases on first use and are cached in
 [examples/quickstart.ipynb on Colab](https://colab.research.google.com/github/ORNL-Fusion/solstice/blob/main/examples/quickstart.ipynb).
 Runnable scripts: `examples/predict_state.py`, `examples/predict_sources.py`.
 
+To warm-start a SOLPS-ITER case from the state model, `solstice-b2fstati`
+writes the prediction as the `b2fstati` of a staged copy of a reference run
+(`--init nn`), or a uniform cold start for comparison (`--init flat`);
+`--check RUN` reports whether an existing `b2fstati` is flat:
+
+```
+solstice-b2fstati --init nn   --reference-run /path/to/completed_run
+solstice-b2fstati --init flat --reference-run /path/to/completed_run
+```
+
 Inputs are the models' true degrees of freedom (the training data has
 pe = pi and hci = hce, so the models see `ptot = pe + pi` and a single
 `chi`). Requests outside the training parameter box raise a warning —
@@ -60,7 +70,8 @@ caveats ship inside each bundle (`bundle.json`, `model_card.md`).
 
 ```
 src/solstice/
-  data/        dataset schema + converters (SOLPS output -> canonical)
+  data/        dataset schema + converters (SOLPS output -> canonical,
+               prediction -> b2fstati for warm-starting SOLPS-ITER)
   graphs/      mesh -> graph construction
   models/      registry + architectures
   inference/   checkpoint loading, profiling

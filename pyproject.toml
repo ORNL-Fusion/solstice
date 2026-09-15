@@ -34,6 +34,9 @@ hub = ["huggingface_hub"]
 # package (solps_routines) on the python path.
 dev = ["pytest", "ruff"]
 
+[project.scripts]
+solstice-b2fstati = "solstice.data.converters.to_solps:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
