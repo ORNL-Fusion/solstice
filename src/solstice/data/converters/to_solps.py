@@ -28,9 +28,10 @@ Two initial states:
         reference b2fstate; everything the model does not predict (fluxes,
         po, the D0 fluid block, guard cells) is copied verbatim.
 
-  flat  Uniform cold start, what b2ai would produce: uniform ne, na, te, ti
-        in every cell including guard cells, ua = po = time = 0, every other
-        real field zeroed. Species metadata is copied verbatim.
+  flat  Uniform cold start, what b2ai produces: uniform ne, na, te, ti in
+        every cell including guard cells, po = 3.1 * Te (b2ai's floating
+        sheath potential), ua = time = 0, every other real field zeroed.
+        Species metadata is copied verbatim.
 
 `check_flatness` reports whether an existing b2fstati is flat or a
 structured, pre-converged state (a shipped b2fstati often is).
@@ -331,9 +332,15 @@ def neutral_density_default(ref_state: Path, ne0: float, n0_frac: float = 1e-3) 
     return n0_frac * ne0
 
 
+PO_OVER_TE = 3.1  # b2ai: uniform po = 3.1 * Te [V], the floating sheath potential
+
+
 def build_flat_state(ref_state: Path, ne0: float, te0_eV: float, ti0_eV: float,
-                     n0: float) -> dict:
-    """{name: flat array} for every real block except species metadata."""
+                     n0: float, po0: float | None = None) -> dict:
+    """{name: flat array} for every real block except species metadata.
+    po0 defaults to b2ai's 3.1 * Te."""
+    if po0 is None:
+        po0 = PO_OVER_TE * te0_eV
     nx, ny, ns = b2f_read_dims(ref_state)
     ncell = (nx + 2) * (ny + 2)
     zamin = b2f_extract("zamin", ref_state, reshape=False)
@@ -354,6 +361,8 @@ def build_flat_state(ref_state: Path, ne0: float, te0_eV: float, ti0_eV: float,
             v = np.full(ncell, ti0_eV * EV_TO_J)
         elif name == "na":
             v = np.repeat(na0, ncell)  # species-major = Fortran (nx+2, ny+2, ns)
+        elif name == "po":
+            v = np.full(ncell, po0)
         elif name == "time":
             v = np.zeros(1)
         else:  # ua, po, fluxes, drifts, corrections, kinrgy ...
@@ -481,6 +490,7 @@ def main(argv: list[str] | None = None) -> None:
     g.add_argument("--n0", type=float, help="uniform fluid-neutral density [m^-3] (default: "
                    "reference's uniform floor if any, else --n0-frac * ne)")
     g.add_argument("--n0-frac", type=float, default=1e-3)
+    g.add_argument("--po", type=float, help="uniform potential [V] (default: 3.1 * Te, as b2ai)")
     args = p.parse_args(argv)
 
     if args.check:
@@ -507,9 +517,10 @@ def main(argv: list[str] | None = None) -> None:
         ti0 = args.ti if args.ti is not None else mean_of("ti", 1 / EV_TO_J)
         n0 = (args.n0 if args.n0 is not None
               else neutral_density_default(ref_state, ne0, args.n0_frac))
+        po0 = args.po if args.po is not None else PO_OVER_TE * te0
         print(f"flat state: ne={ne0:.4g} m^-3, Te={te0:.4g} eV, Ti={ti0:.4g} eV, "
-              f"fluid-neutral n0={n0:.3g} m^-3")
-        fields = build_flat_state(ref_state, ne0, te0, ti0, n0)
+              f"fluid-neutral n0={n0:.3g} m^-3, po={po0:.4g} V")
+        fields = build_flat_state(ref_state, ne0, te0, ti0, n0, po0)
         label = "flat"
 
     if args.plot:

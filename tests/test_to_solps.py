@@ -101,6 +101,7 @@ def test_flat_state(ref_run, tmp_path):
     na = ts.b2f_extract("na", out)
     assert np.allclose(na[:, :, 1], 5e19) and np.allclose(na[:, :, 0], 1e12)
     assert np.allclose(ts.b2f_extract("ti", out) / ts.EV_TO_J, 30.0)
+    assert np.allclose(ts.b2f_extract("po", out), 3.1 * 40.0)  # b2ai: po = 3.1 Te
     assert np.all(ts.b2f_extract("fna", out, reshape=False) == 0)
     assert ts.b2f_extract("time", out, reshape=False)[0] == 0
 
