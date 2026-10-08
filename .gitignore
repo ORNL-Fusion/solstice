@@ -1,0 +1,45 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+
+# data and artifacts never enter the repo
+*.npz
+*.nc
+*.zarr/
+*.h5
+*.safetensors
+*.pt
+*.ckpt
+outputs/
+runs/
+wandb/
+
+.DS_Store
+.ipynb_checkpoints/
+notes/
+notebooks_local/
+notes_local/
+
+# Dasbach SOLPS-NN dataset (17.5 GB zenodo download) + paper
+dasbach_dataset/
+
+# job logs and executed notebook copies stay local (logs/ holds slurm output; keep the dir)
+logs/*
+!logs/.gitkeep
+slurm-*.out
+*.log
+notebooks/*.html
+notebooks/jet_eval_*.ipynb
+validation/notebooks/*.html
+validation/notebooks/jet_eval_*.ipynb
+!validation/notebooks/jet_eval_heads5_ens20.ipynb
+# validation/models keeps metrics + logs in git; weights (*.pt) and the store symlinks (*.nc) stay local
+coupler/SOLPS-ITER/
+
+# release bundles are built by scripts/release/make_bundles.py and uploaded as release assets
+bundles/
+validation/models/*/seed*/
+validation/models/*/parents/seed*/
