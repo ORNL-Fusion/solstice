@@ -1,67 +1,31 @@
-# validation/ — SOLSTICE JET state model (pepc-jet-state-v1)
+# JET validation
 
-Everything behind the JET state model: the dataset of Dasbach et al. (JET-shaped grid
-scaled with the major radius from 1 to 10 m) and how it was turned into training stores,
-the trained model, and the notebooks that test it.
+This directory contains the SOLSTICE JET state model (`pepc-jet-state-v1`), its data preparation, and test-set evaluation.
 
-```
-validation/
-  data/        data release -> solstice stores (build + check scripts, data notebook)
-  models/      the trained model: 20 ensemble members, recipe, test metrics
-  notebooks/   test notebooks (generator, template, executed copy, batch job)
-```
+## Dataset
 
-## Data
+The model uses the SOLPS-NN Training Data v1 release: a SOLPS-ITER scan on a JET-shaped 102 × 48 grid, scaled from 1 to 10 m major radius. The supplied split contains 5,756 training cases and 1,465 test cases. The data and paper are cited below and described in [`data/README.md`](data/README.md).
 
-SOLPS-NN Training Data v1, Dasbach et al., Zenodo 10.5281/zenodo.19237127 (CC BY 4.0).
-SOLPS-ITER scan on one 102 x 48 mesh scaled with the major radius, 8 scalar inputs.
-Train 5756 cases, test 1465 cases, no overlap. Details in `data/README.md`.
+## Model and results
 
-## Model
+The model predicts 27 per-cell outputs and uses a 20-member ensemble. On the held-out test set, median relative errors are 4.2% for `te`, 4.9% for `ti`, and 7.6% for `ne` across all cells. Cold-core cases, parallel velocities, and ensemble uncertainty remain the main limitations.
 
-GNN state model for the JET-shaped grid, 8 inputs -> 27 per-cell outputs (te, ti, ne, 10 densities, 10 parallel
-velocities, q_pol, prad, and the target heat and particle flux profiles). 20 seeds trained
-with the same recipe and used as a deep ensemble (mean = prediction, spread = error
-estimate). Details and the exact training command in `models/.../README.md`.
-
-## Results
-
-Test set, 1465 cases, 20-member ensemble mean. Median relative error per cell.
-
-| field | all cells | outer target | OMP separatrix |
-|---|---|---|---|
-| te | 4.2 % | 8.9 % | 2.5 % |
-| ti | 4.9 % | 9.5 % | 3.2 % |
-| ne | 7.6 % | 15.5 % | 4.3 % |
-| na_D1 | 8.4 % | 16.7 % | 5.0 % |
-| na_N0 | 9.9 % | 23.8 % | 4.4 % |
-| ua_D1 | 21.6 % | 9.5 % | 37.6 % |
-| q_pol | 20.7 % | 14.6 % | 19.0 % |
-| prad | 16.5 % | 18.8 % | 10.0 % |
-| q_target | 10.4 % | 10.2 % | |
-| gamma_target | 12.3 % | 13.1 % | |
-
-Te by regime: attached 2.3 %, detached 3.7 %, sheath-limited 4.4 %, cold core 24.4 %.
-Single seeds: Te all cells 5.2 +- 0.2 %.
-
-Weak spots: cold-core cases (target heads unusable there), parallel velocities,
-and the ensemble spread, which under-estimates the error (about 60 % of cells
-within one standard deviation).
-
-The released bundle (`pepc-jet-state-v1`) averages the members in log space
-and gives Te 4.3 % / 9.2 % / 2.5 % on the same cases (recorded in its bundle.json).
-
-Full numbers: `models/jet_heads5_h1024_ft_te_ens20/ens20_mean.json`.
-Figures: `notebooks/jet_eval_heads5_ens20.ipynb`.
+Full metrics are in [`ens20_mean.json`](models/jet_heads5_h1024_ft_te_ens20/ens20_mean.json); evaluation plots are in [`jet_eval_heads5_ens20.ipynb`](notebooks/jet_eval_heads5_ens20.ipynb). Model details and the training recipe are in [`models/jet_heads5_h1024_ft_te_ens20/README.md`](models/jet_heads5_h1024_ft_te_ens20/README.md).
 
 ## Reproduce
 
-From the repo root with the solstice environment active and `SOLSTICE_DATA` set:
+With the SOLSTICE environment active and `SOLSTICE_DATA` pointing to the two stores:
 
-1. `python validation/data/check_stores.py --md5`
-2. `sbatch --array=0-19 validation/models/jet_heads5_h1024_ft_te_ens20/recipe/ensemble.sbatch`
-3. `bash validation/models/jet_heads5_h1024_ft_te_ens20/evaluate.sh`
-4. `sbatch validation/notebooks/run_notebook.sbatch`
+```bash
+python validation/data/check_stores.py --md5
+sbatch --array=0-19 validation/models/jet_heads5_h1024_ft_te_ens20/recipe/ensemble.sbatch
+bash validation/models/jet_heads5_h1024_ft_te_ens20/evaluate.sh
+sbatch validation/notebooks/run_notebook.sbatch
+```
 
-The model weights (20 x 94 MB) are not in git; they ship as the `pepc-jet-state-v1`
-release bundle.
+Model weights are distributed in the `pepc-jet-state-v1` release bundle.
+
+## References
+
+- S. Dasbach, S. Brezinsek, Y. Liang, D. Reiser, and S. Wiesen, “Deep-Learning based surrogate models for plasma exhaust simulations — SOLPS-NN,” arXiv:2604.19223 (2026), [arXiv](https://arxiv.org/abs/2604.19223).
+- S. Dasbach, S. Brezinsek, Y. Liang, D. Reiser, and S. Wiesen, *SOLPS-NN Training Data v1* (2026), [Zenodo](https://doi.org/10.5281/zenodo.19237127), CC BY 4.0.
