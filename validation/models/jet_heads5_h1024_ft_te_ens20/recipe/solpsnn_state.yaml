@@ -1,0 +1,92 @@
+# =========================================================================================
+# (C) (or copyright) 2026. UT-Battelle, LLC. All rights reserved.
+#
+# This program was produced under U.S. Government contract DE-AC05-00OR22725 with
+# UT-Battelle, LLC, which manages Oak Ridge National Laboratory (ORNL) for the U.S.
+# Department of Energy (DOE). The U.S. Government is granted for itself and others acting
+# on its behalf a nonexclusive, paid-up, irrevocable worldwide license in this material
+# to reproduce, prepare derivative works, distribute copies to the public, perform
+# publicly and display publicly, and to permit others to do so. The DOE will provide
+# public access to these results in accordance with the DOE Public Access Plan
+# (http://energy.gov/downloads/doe-public-access-plan).
+# =========================================================================================
+# SOLSTICE GNN state model on the SOLPS-NN (Dasbach) release: 8 inputs -> the 22 SOLPS
+# state variables (te, ti, 10 na, 10 ua) + ne, prad, q_pol, and the target q profiles.
+# Stores: python -m solstice.data.converters.from_solpsnn <release> <out_dir>
+# Train:  solstice-train --config configs/training/solpsnn_state.yaml
+# Paths default to the NERSC layout; override with --set data.train_store=... etc.
+task: state
+seed: 0
+out_dir: runs/solpsnn_gnn_h128_l8_n256
+
+data:
+  train_store: ${SOLSTICE_DATA}/solstice_store_solpsnn_v1_train.nc
+  test_store:  ${SOLSTICE_DATA}/solstice_store_solpsnn_v1_test.nc
+  qc: qc_pass
+  val_fraction: 0.1
+  # exclude_regimes: [cold core]     # optional physics cut
+  # inputs: default = every non-constant input_* column after merging
+  #   pe + pi -> ptot and hci = hce -> chi: rmajor, btor, ptot, puff_D, puff_N,
+  #   core_fueling, dna, chi (the paper's 8 parameters)
+  log_inputs: [puff_D, puff_N, core_fueling]     # log-uniformly sampled (Table 1)
+  fields:                     # name: log | linear (per-cell standardization after transform)
+    te: log
+    ti: log
+    ne: log
+    na_D0: log
+    na_D1: log
+    na_N0: log
+    na_N1: log
+    na_N2: log
+    na_N3: log
+    na_N4: log
+    na_N5: log
+    na_N6: log
+    na_N7: log
+    ua_D0: linear
+    ua_D1: linear
+    ua_N0: linear
+    ua_N1: linear
+    ua_N2: linear
+    ua_N3: linear
+    ua_N4: linear
+    ua_N5: linear
+    ua_N6: linear
+    ua_N7: linear
+    q_pol: linear
+    prad: log
+  # Auxiliary heads: the face-centred target heat-flux profiles, learned as one
+  # more output channel supervised only on the target-adjacent cells (roadmap).
+  aux_targets:
+    q_target:                       # heat flux density [W/m^2] -> q_peak,ot (paper Table 4)
+      inner_target: q_inner_target
+      outer_target: q_outer_target
+      log: false
+    gamma_target:                   # D+ flux density [atoms/(m^2 s)] -> Gamma_D+,ot (Table 4)
+      inner_target: gamma_inner_target
+      outer_target: gamma_outer_target
+      log: false
+
+model:
+  class: gnn
+  config:
+    hidden: 128
+    n_process_layers: 8
+    dropout: 0.1
+
+graph:
+  n_latent: 256
+  k_nn: 6
+
+train:
+  epochs: 300
+  batch: 32
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  warmup: 5
+  target_weight: 5.0        # extra loss weight on target-adjacent cells
+  grad_clip: 1.0
+  amp: true                 # bf16 autocast on CUDA
+  ckpt_every: 10
+  log_every: 10
+  # max_hours: 11.5         # stop + checkpoint before a Slurm limit; re-submit to resume
